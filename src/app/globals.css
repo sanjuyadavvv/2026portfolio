@@ -1,0 +1,333 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Single source of truth for the portfolio palette.
+ * Every color in the app must come from here — no hex/rgb literals and no
+ * Tailwind palette utilities (text-white, bg-black, text-gray-400, ...) in
+ * components. Each token below also generates a utility, e.g. `text-ink`,
+ * `bg-surface`, `border-ink/15`, `bg-brand`.
+ */
+@theme {
+  /* Neutrals */
+  --color-ink: #212529;
+  --color-ink-light: #34383c;
+  --color-surface: #f5f5f5;
+  --color-surface-raised: #ffffff;
+  --color-surface-inverse: #151515;
+  --color-on-dark: #ffffff;
+  --color-on-light: var(--color-ink);
+  --color-wire-dark: #6b7280;
+  --color-scrollbar-thumb: #888888;
+  --color-shadow-ambient: rgba(99, 99, 99, 0.2);
+
+  /* Brand */
+  --color-brand: #f7362b;
+  --color-brand-soft: #ff4d4f;
+  --color-brand-deep: #e11d48;
+
+  /* Semantic */
+  --color-danger: var(--color-brand);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+
+  /* Role aliases onto the palette above — kept for existing `bg-(--color-design)` usage */
+  --color-design: var(--color-brand-soft);
+  --color-frontend: var(--color-brand);
+  --color-fullstack: var(--color-brand-deep);
+  --shadow-design: color-mix(in srgb, var(--color-brand-soft) 40%, transparent);
+  --shadow-frontend: color-mix(in srgb, var(--color-brand) 40%, transparent);
+  --shadow-fullstack: color-mix(in srgb, var(--color-brand-deep) 40%, transparent);
+  /* rgb channels of --color-brand, for legacy rgba() consumers */
+  --theme-color-rgb: 247, 54, 43;
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+body {
+  background-color: var(--color-surface-raised);
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-raleway), system-ui, sans-serif;
+  }
+}
+
+@utility dark-theme-bg {
+  background-color: var(--color-ink);
+}
+
+@utility dark-theme-bg-light {
+  background-color: var(--color-ink-light);
+}
+
+@utility dark-theme-text {
+  color: var(--color-surface);
+}
+
+@utility dark-theme-stroke {
+  -webkit-text-stroke: 1px var(--color-on-dark);
+  &::before {
+    color: var(--color-on-dark);
+  }
+}
+
+@utility dark-theme-border {
+  border: 3px solid var(--color-surface);
+}
+
+@utility dark-theme-shadow {
+  box-shadow: color-mix(in srgb, var(--color-on-dark) 12%, transparent) 0px -3px 0px 0px inset, var(--color-ink) 0px 0px 2px 0px inset,
+    color-mix(in srgb, var(--color-on-dark) 15%, transparent) 0px 0px 0px 2px inset, color-mix(in srgb, var(--color-on-dark) 5%, transparent) 0px 4px 24px 0px inset,
+    color-mix(in srgb, var(--color-ink) 12%, transparent) 0px 3px 4px 0px;
+}
+
+@utility dark-theme-border-sm {
+  border: 1px solid var(--color-surface);
+}
+
+@utility dark-theme-gradient {
+  &::before {
+    background: linear-gradient(90deg, var(--color-ink-light) 0%, var(--color-ink) 44%, var(--color-ink-light) 100%);
+  }
+  &:hover::before {
+    box-shadow: color-mix(in srgb, var(--color-on-dark) 5%, transparent) 0px -3px 0px 0px inset, var(--color-ink) 0px 0px 0px 2px inset,
+      color-mix(in srgb, var(--color-on-dark) 6%, transparent) 0px 4px 2px 0px inset, color-mix(in srgb, var(--color-on-dark) 4%, transparent) 0px 0px 24px 4px inset,
+      color-mix(in srgb, var(--color-on-dark) 12%, transparent) 0px 1px 3px 0px;
+    box-shadow: color-mix(in srgb, var(--color-ink) 5%, transparent) 0px -3px 0px 0px inset, var(--color-on-dark) 0px 0px 0px 2px inset,
+      color-mix(in srgb, var(--color-ink) 6%, transparent) 0px 4px 2px 0px inset, color-mix(in srgb, var(--color-ink) 4%, transparent) 0px 0px 24px 4px inset,
+      color-mix(in srgb, var(--color-ink) 12%, transparent) 0px 1px 3px 0px;
+  }
+}
+
+@utility light-theme-bg {
+  background-color: var(--color-surface);
+}
+
+@utility light-theme-bg-light {
+  background-color: var(--color-surface-raised);
+}
+
+@utility light-theme-text {
+  color: var(--color-ink);
+}
+
+@utility light-theme-stroke {
+  -webkit-text-stroke: 1px var(--color-ink);
+  &::before {
+    color: var(--color-ink);
+  }
+}
+
+@utility light-theme-border {
+  border: 3px solid var(--color-ink);
+}
+
+@utility light-theme-shadow {
+  box-shadow: color-mix(in srgb, var(--color-ink) 5%, transparent) 0px -3px 0px 0px inset, var(--color-on-dark) 0px 0px 0px 2px inset,
+    color-mix(in srgb, var(--color-ink) 6%, transparent) 0px 4px 2px 0px inset, color-mix(in srgb, var(--color-ink) 4%, transparent) 0px 0px 24px 4px inset,
+    color-mix(in srgb, var(--color-ink) 12%, transparent) 0px 1px 3px 0px;
+}
+
+@utility light-theme-border-sm {
+  border: 1px solid var(--color-ink);
+}
+
+@utility light-theme-gradient {
+  &::before {
+    background: linear-gradient(90deg, var(--color-design) 0%, var(--color-frontend) 44%, var(--color-fullstack) 100%);
+  }
+  &:hover::before {
+    box-shadow: color-mix(in srgb, var(--color-ink) 5%, transparent) 0px -3px 0px 0px inset, var(--color-on-dark) 0px 0px 0px 2px inset,
+      color-mix(in srgb, var(--color-ink) 6%, transparent) 0px 4px 2px 0px inset, color-mix(in srgb, var(--color-ink) 4%, transparent) 0px 0px 24px 4px inset,
+      color-mix(in srgb, var(--color-ink) 12%, transparent) 0px 1px 3px 0px;
+  }
+}
+
+/* Glow-reveal button: stroked text fills with color on hover, arrow slides from left to right */
+.glow-reveal-btn {
+  --text-stroke-color: currentColor;
+  --animation-color: var(--color-design);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding-left: 1.25rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  transition: padding-left 0.5s ease, padding-right 0.5s ease;
+}
+
+.glow-reveal-btn:hover {
+  padding-left: 0;
+  padding-right: 1.25rem;
+}
+
+.glow-reveal-btn .reveal-arrow {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  transition: left 0.5s ease, transform 0.5s ease, filter 0.5s ease;
+}
+
+.glow-reveal-btn:hover .reveal-arrow {
+  left: 100%;
+  transform: translateY(-50%) translateX(-100%);
+  filter: drop-shadow(0 0 10px var(--animation-color));
+}
+
+.glow-reveal-btn .text-mask {
+  position: relative;
+  display: inline-block;
+}
+
+.glow-reveal-btn .actual-text {
+  -webkit-text-stroke: 0.2px transparent;
+}
+
+.glow-reveal-btn .hover-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  width: 0%;
+  color: var(--animation-color);
+  -webkit-text-stroke: 0.2px var(--animation-color);
+  transition: width 0.5s ease;
+}
+
+.glow-reveal-btn:hover .hover-layer {
+  width: 100%;
+}
+

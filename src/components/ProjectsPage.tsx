@@ -1,0 +1,277 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import {
+  AnimatePresence,
+  m,
+  useMotionValue,
+  useSpring,
+} from "motion/react";
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
+import { getProjectsForPage } from "@/constants/projectData";
+import type { Project, ProjectCategory } from "@/types/project";
+import { useGlobalContext } from "@/context/globalContext";
+import ProximityText from "./ui/ProximityText";
+import { themeTokens } from "@/lib/theme";
+
+type Filter = "all" | ProjectCategory;
+
+const springConfig = { stiffness: 260, damping: 30, mass: 0.5 };
+
+const tabs: { label: string; value: Filter }[] = [
+  { label: "All", value: "all" },
+  { label: "Frontend", value: "frontend" },
+  { label: "Fullstack", value: "fullstack" },
+  { label: "100% AI Slop", value: "aiSlop" },
+];
+
+const categoryLabels: Record<ProjectCategory, string> = {
+  frontend: "frontend",
+  fullstack: "fullstack",
+  aiSlop: "AI Slop",
+};
+
+const Row = ({
+  project,
+  index,
+  darkTheme,
+  onHoverStart,
+  onHoverEnd,
+  onMove,
+}: {
+  project: Project;
+  index: number;
+  darkTheme: boolean;
+  onHoverStart: (project: Project) => void;
+  onHoverEnd: () => void;
+  onMove: (x: number, y: number) => void;
+}) => {
+  const { subtle, border } = themeTokens(darkTheme);
+
+  return (
+    <m.a
+      href={project.link}
+      target="_blank"
+      rel="noopener noreferrer"
+      layout
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -12, transition: { duration: 0.15, ease: "easeOut" } }}
+      transition={{
+        type: "spring",
+        stiffness: 500,
+        damping: 40,
+        delay: index * 0.03,
+      }}
+      onMouseEnter={() => onHoverStart(project)}
+      onMouseLeave={onHoverEnd}
+      onMouseMove={(e) => onMove(e.clientX, e.clientY)}
+      className={`group grid grid-cols-1 gap-4 border-t ${border} py-10 md:grid-cols-[1fr_2fr] md:gap-16 md:py-12`}
+    >
+      {/* Left — name + category */}
+      <div className="flex flex-col gap-2 md:gap-3">
+        <span className="flex items-center gap-2 text-xl font-thin leading-[110%] tracking-[-0.02em] transition-colors group-hover:text-(--color-design) md:text-3xl">
+          {project.name}
+          <ArrowUpRight
+            size={20}
+            strokeWidth={1.5}
+            className="opacity-0 transition-opacity group-hover:opacity-100"
+          />
+        </span>
+        <span className={`hidden text-xs md:block md:text-sm ${subtle}`}>[ {categoryLabels[project.category]} ]</span>
+      </div>
+
+      {/* Right — image + one-liner on mobile, points on desktop */}
+      <div className="flex flex-col gap-3 md:hidden">
+        <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+          <Image
+            src={`/${project.desktopImage}`}
+            alt={project.name}
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
+        <p className={`text-sm leading-[140%] md:text-base ${subtle}`}>{project.points[0]}</p>
+      </div>
+
+      <ul className="hidden flex-col gap-2 md:flex">
+        {project.points.map((point) => (
+          <li
+            key={point}
+            className={`flex gap-3 text-sm leading-[140%] md:text-base ${subtle}`}
+          >
+            <span className="text-(--color-design)">/</span>
+            <span>{point}</span>
+          </li>
+        ))}
+      </ul>
+    </m.a>
+  );
+};
+
+export default function ProjectsPageClient() {
+  const { darkTheme } = useGlobalContext();
+  const [filter, setFilter] = useState<Filter>("all");
+  const [hovered, setHovered] = useState<Project | null>(null);
+
+  // Raw cursor position, smoothed with a spring so the image trails the cursor.
+  const cursorX = useMotionValue(0);
+  const cursorY = useMotionValue(0);
+  const imageX = useSpring(cursorX, springConfig);
+  const imageY = useSpring(cursorY, springConfig);
+
+  const handleMove = (x: number, y: number) => {
+    cursorX.set(x);
+    cursorY.set(y);
+  };
+
+  const projects = useMemo(() => getProjectsForPage("projects"), []);
+  const filtered = useMemo(
+    () =>
+      filter === "all"
+        ? projects
+        : projects.filter((p) => p.category === filter),
+    [projects, filter]
+  );
+
+  const { text, subtle, border } = themeTokens(darkTheme);
+
+  return (
+    <div
+      className={`${
+        darkTheme ? "dark-theme-bg" : "light-theme-bg"
+      } ${text} min-h-screen w-full`}
+    >
+
+      {/* Cursor-following project preview */}
+      <AnimatePresence>
+        {hovered && (
+          <m.div
+            key={hovered.name}
+            style={{
+              left: imageX,
+              top: imageY,
+              x: "-50%",
+              y: "-50%",
+            }}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="pointer-events-none fixed z-50 hidden aspect-video w-[24rem] overflow-hidden rounded-xl shadow-2xl md:block"
+          >
+            <Image
+              src={`/${hovered.desktopImage}`}
+              alt={hovered.name}
+              fill
+              sizes="24rem"
+              className="object-cover"
+            />
+          </m.div>
+        )}
+      </AnimatePresence>
+
+      <div className="mx-auto w-full max-w-7xl px-5 py-24 sm:px-6 md:px-16 md:py-32">
+        {/* Header */}
+        <div className="mb-12 md:mb-20">
+          <m.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className={`mb-3 text-sm md:mb-6 md:text-lg ${subtle}`}
+          >
+            // Selected work
+          </m.p>
+          <m.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="hero-heading w-full text-5xl font-thin italic leading-[100%] tracking-[-0.04em] md:text-[8vw]"
+          >
+            <ProximityText
+              text="Projects"
+              maxDistance={200}
+              minWeight={100}
+              maxWeight={700}
+            />
+          </m.h1>
+        </div>
+
+        {/* Tabs */}
+        <div className="mb-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm md:gap-6 md:text-lg">
+          {tabs.map((tab) => {
+            const active = filter === tab.value;
+            return (
+              <button
+                key={tab.value}
+                type="button"
+                onClick={() => setFilter(tab.value)}
+                className={`flex items-center gap-1 tracking-wide transition-colors ${
+                  active
+                    ? "text-(--color-design)"
+                    : `${subtle} hover:text-(--color-design)`
+                }`}
+              >
+                <span className="relative inline-flex h-[1em] w-[0.6em] items-center justify-center align-middle">
+                  <AnimatePresence>
+                    {active && (
+                      <m.span
+                        layoutId="tab-bracket-left"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                        className="absolute inset-0 flex items-center justify-center"
+                      >
+                        [
+                      </m.span>
+                    )}
+                  </AnimatePresence>
+                </span>
+                {tab.label}
+                <span className="relative inline-flex h-[1em] w-[0.6em] items-center justify-center align-middle">
+                  <AnimatePresence>
+                    {active && (
+                      <m.span
+                        layoutId="tab-bracket-right"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ type: "spring", stiffness: 500, damping: 35 }}
+                        className="absolute inset-0 flex items-center justify-center"
+                      >
+                        ]
+                      </m.span>
+                    )}
+                  </AnimatePresence>
+                </span>
+              </button>
+            );
+          })}
+          <span className={`ml-auto hidden text-xs md:inline md:text-sm ${subtle}`}>
+            {filtered.length.toString().padStart(2, "0")} projects
+          </span>
+        </div>
+
+        {/* List */}
+        <m.div layout className={`border-b ${border}`}>
+          <AnimatePresence mode="popLayout">
+            {filtered.map((project, index) => (
+              <Row
+                key={project.name}
+                project={project}
+                index={index}
+                darkTheme={darkTheme}
+                onHoverStart={setHovered}
+                onHoverEnd={() => setHovered(null)}
+                onMove={handleMove}
+              />
+            ))}
+          </AnimatePresence>
+        </m.div>
+      </div>
+    </div>
+  );
+}
