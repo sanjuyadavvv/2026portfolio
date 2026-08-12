@@ -80,7 +80,7 @@ const HeroSection = () => {
                   backdropFilter: "blur(0px)",
                 }
               }
-              src="/images/avatar.png"
+              src="/images/sanjuavatar.png"
               alt="Sanju Yadav"
               className="h-20 w-20 md:h-60 md:w-60 shrink-0 object-contain "
             />
@@ -99,20 +99,20 @@ const HeroSection = () => {
           </p>
         </div>
 
-        <div className=" flex w-full mx-auto max-w-2xl items-center gap-4 md:justify-center md:gap-14">
-          <m.img
-            initial={{ opacity: 0, scale: 0.9, backdropFilter: "blur(2px)" }}
-            animate={
-              !isLoading && {
-                opacity: 1,
-                scale: 1,
-                backdropFilter: "blur(0px)",
-              }
-            }
-            src="/images/avatar.png"
-            alt="Sanju Yadav"
-            className="h-20 w-20 md:h-60 md:w-60 shrink-0 object-contain hidden md:block"
-          />
+       <div className="flex w-full mx-auto max-w-2xl items-stretch gap-4 md:justify-center md:gap-14">
+  <m.img
+    initial={{ opacity: 0, scale: 0.9, backdropFilter: "blur(2px)" }}
+    animate={
+      !isLoading && {
+        opacity: 1,
+        scale: 1,
+        backdropFilter: "blur(0px)",
+      }
+    }
+    src="/images/sanjuavatar.png"
+    alt="Sanju Yadav"
+    className="w-full md:w-60 shrink-0 object-cover hidden md:block"
+  />
 
           <div className="flex flex-col gap-8 md:justify-between md:text-left text-xs md:text-xl self-stretch font-light md:font-normal flex-1 min-w-0">
             <p className=" desc leading-[110%] tracking-tight min-h-[3.6em] hidden md:block w-full text-left">
