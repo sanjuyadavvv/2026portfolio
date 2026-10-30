@@ -1,6 +1,7 @@
 import Link from "next/link";
 import HomePageClient from "@/components/home-page-client";
 import { siteConfig } from "@/lib/site";
+import { Analytics } from "@vercel/analytics/next"
 
 /**
  * Server-rendered, crawler-visible content.
@@ -78,6 +79,8 @@ export default function Page() {
     <>
       <SeoContent />
       <HomePageClient />
+      <Analytics/>
+      
     </>
   );
 }
